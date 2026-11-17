@@ -1,0 +1,224 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------
+   Design tokens. Tailwind v4 reads these and creates utility classes,
+   e.g. --color-lilac-200 becomes bg-lilac-200 / text-lilac-200.
+   "static" makes Tailwind always output every token as a CSS variable,
+   including ones used only through var() in the plain CSS below.
+   This is only the minimum for the shell; the full design system is M4.
+   ------------------------------------------------------------------ */
+@theme static {
+  --font-display:
+    'Gaegu', 'Noto Sans KR Variable', 'Apple SD Gothic Neo', 'Malgun Gothic', cursive;
+  --font-body:
+    'Noto Sans KR Variable', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR',
+    system-ui, sans-serif;
+
+  /* Warm cream paper */
+  --color-cream-50: #fffaf0;
+  --color-cream-100: #fff3df;
+  --color-cream-200: #f6e6c8;
+
+  /* Lavender */
+  --color-lilac-100: #f3edff;
+  --color-lilac-200: #e4d9ff;
+  --color-lilac-300: #cdbcf7;
+  --color-lilac-600: #6b4fb3;
+  --color-lilac-700: #4f3590;
+
+  /* Pink */
+  --color-blush-100: #ffeaf1;
+  --color-blush-200: #ffd3e2;
+  --color-blush-300: #ffb6d0;
+  --color-blush-600: #b4366a;
+
+  /* Mint */
+  --color-mint-200: #c6f0dc;
+  --color-mint-300: #9fe3c3;
+  --color-mint-700: #23704f;
+
+  /* Ink (text) */
+  --color-ink-500: #5f5878;
+  --color-ink-700: #3d3552;
+  --color-ink-900: #2a2339;
+
+  --shadow-paper: 0 1px 0 rgb(42 35 57 / 0.06), 0 10px 22px -10px rgb(42 35 57 / 0.3);
+}
+
+/* ------------------------------------------------------------------
+   Base styles
+   ------------------------------------------------------------------ */
+@layer base {
+  html {
+    font-family: var(--font-body);
+    color: var(--color-ink-900);
+    background-color: var(--color-cream-50);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Dotted-grid notebook paper behind everything. */
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background-image: radial-gradient(
+      circle,
+      rgb(107 79 179 / 0.14) 1px,
+      transparent 1.2px
+    );
+    background-size: 22px 22px;
+    padding-top: env(safe-area-inset-top);
+  }
+
+  /* Korean text should wrap between words, not in the middle of a word. */
+  :lang(ko) {
+    word-break: keep-all;
+  }
+
+  ::selection {
+    background: var(--color-blush-200);
+  }
+
+  /* Visible keyboard focus everywhere. */
+  :where(a, button, [tabindex]):focus-visible {
+    outline: 3px solid var(--color-lilac-600);
+    outline-offset: 3px;
+  }
+
+  /* <main> is focusable only so the skip link can move focus to it. */
+  main:focus-visible {
+    outline: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Stationery pieces used by the shell and home screen
+   ------------------------------------------------------------------ */
+@layer components {
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 50;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    background: var(--color-ink-900);
+    color: var(--color-cream-50);
+    font-weight: 600;
+  }
+  .skip-link:focus {
+    top: 1rem;
+  }
+
+  /* Notebook page: pink margin line down the left side. */
+  .notebook-page {
+    position: relative;
+    background-color: var(--color-cream-50);
+    box-shadow: var(--shadow-paper);
+    border-radius: 0.4rem 1.5rem 1.5rem 0.4rem;
+  }
+  .notebook-page::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    left: 2.25rem;
+    width: 2px;
+    background: var(--color-blush-300);
+    opacity: 0.7;
+  }
+
+  /* Ruled lines. Text inside must use the same 2rem line height. */
+  .ruled {
+    line-height: 2rem;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(2rem - 1px),
+      rgb(107 79 179 / 0.28) calc(2rem - 1px),
+      rgb(107 79 179 / 0.28) 2rem
+    );
+  }
+
+  /* Washi tape. Set the size and rotation with Tailwind classes. */
+  .washi {
+    background-color: var(--washi, var(--color-blush-300));
+    background-image: repeating-linear-gradient(
+      135deg,
+      rgb(255 255 255 / 0.45) 0 5px,
+      transparent 5px 10px
+    );
+    opacity: 0.92;
+    box-shadow: 0 1px 2px rgb(42 35 57 / 0.15);
+  }
+  .washi-mint {
+    --washi: var(--color-mint-300);
+  }
+  .washi-lilac {
+    --washi: var(--color-lilac-300);
+  }
+
+  /* Sticky note with a curled bottom-right corner. */
+  .sticky-note {
+    position: relative;
+    box-shadow: var(--shadow-paper);
+  }
+  .sticky-note::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 1.75rem;
+    height: 1.75rem;
+    background: linear-gradient(135deg, transparent 50%, rgb(42 35 57 / 0.12) 50%);
+  }
+
+  /* Round ink stamp. */
+  .stamp {
+    border: 3px double var(--color-blush-600);
+    color: var(--color-blush-600);
+    border-radius: 9999px;
+    opacity: 0.8;
+  }
+
+  /* Highlighter-pen underline. */
+  .hand-underline {
+    background-image: linear-gradient(
+      transparent 62%,
+      var(--color-blush-200) 62%,
+      var(--color-blush-200) 92%,
+      transparent 92%
+    );
+    padding-inline: 0.15em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  /* Notebook spine: punched binder holes down the side (desktop only). */
+  @media (min-width: 48rem) {
+    .spine {
+      background-image: radial-gradient(
+        circle at 1.4rem 1.25rem,
+        var(--color-cream-50) 0.5rem,
+        rgb(79 53 144 / 0.35) 0.5rem 0.56rem,
+        transparent 0.58rem
+      );
+      background-size: 100% 2.5rem;
+      background-repeat: repeat-y;
+      box-shadow: inset -8px 0 14px -10px rgb(42 35 57 / 0.35);
+    }
+  }
+}
+
+/* ------------------------------------------------------------------
+   Reduced motion: respect the operating-system setting.
+   (Motion for React is handled separately by <MotionConfig> in App.tsx.)
+   ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
